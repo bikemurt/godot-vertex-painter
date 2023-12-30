@@ -37,4 +37,4 @@ https://github.com/bikemurt/godot-vertex-painter/assets/23486102/3c218bdb-3fc2-4
 
 ## 🗒️ License
 
-[MIT License](/LICENSE.md)
+[MIT License](/LICENSE)
