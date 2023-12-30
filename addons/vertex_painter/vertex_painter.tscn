@@ -1,0 +1,133 @@
+[gd_scene load_steps=3 format=3 uid="uid://bkbcpfac5wbnj"]
+
+[ext_resource type="Script" path="res://addons/vertex_painter/get_editor_camera.gd" id="1_6dus2"]
+[ext_resource type="Script" path="res://addons/vertex_painter/Node3D.gd" id="2_aplt7"]
+
+[node name="Vertex Painter" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_6dus2")
+
+[node name="EnablePaintingCheckBox" type="CheckBox" parent="."]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 204.0
+offset_right = 180.0
+offset_bottom = 240.0
+tooltip_text = "When enabled, paint mode is active and the viewport will be switched to the 3D editor"
+text = "Enable Painting"
+
+[node name="ShowVertexColorsCheckBox" type="CheckBox" parent="."]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 5.0
+offset_right = 179.0
+offset_bottom = 41.0
+tooltip_text = "When checked, the current material will be cached and vertex color visualization material will be loaded on the selected mesh.
+
+NOTE: make sure you uncheck this when you are done painting otherwise you may lose your original material"
+text = "Show Colors"
+
+[node name="DebugMeshCheckBox" type="CheckBox" parent="."]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 45.0
+offset_right = 180.0
+offset_bottom = 81.0
+tooltip_text = "Enable to show a Box mesh at the project mouse location on the 3D collision surface"
+text = "Debug Mesh"
+
+[node name="RedLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 94.0
+offset_right = 32.0
+offset_bottom = 120.0
+text = "R:"
+
+[node name="GreenLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 132.0
+offset_right = 32.0
+offset_bottom = 158.0
+text = "G:"
+
+[node name="BlueLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 168.0
+offset_right = 33.0
+offset_bottom = 194.0
+text = "B:"
+
+[node name="RedLineEdit" type="LineEdit" parent="."]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 92.0
+offset_right = 111.063
+offset_bottom = 123.0
+tooltip_text = "Red value
+
+Press ENTER to set value"
+text = "1"
+clear_button_enabled = true
+select_all_on_focus = true
+
+[node name="GreenLineEdit" type="LineEdit" parent="."]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 130.0
+offset_right = 111.063
+offset_bottom = 161.0
+tooltip_text = "Green value
+
+Press ENTER to set value"
+text = "1"
+clear_button_enabled = true
+select_all_on_focus = true
+
+[node name="BlueLineEdit" type="LineEdit" parent="."]
+layout_mode = 0
+offset_left = 29.0
+offset_top = 166.0
+offset_right = 112.063
+offset_bottom = 197.0
+tooltip_text = "Blue value
+
+Press ENTER to set value"
+text = "1"
+clear_button_enabled = true
+select_all_on_focus = true
+
+[node name="BrushSize" type="Label" parent="."]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 246.0
+offset_right = 88.0
+offset_bottom = 272.0
+text = "Brush Size:"
+
+[node name="BrushSizeLineEdit" type="LineEdit" parent="."]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 278.0
+offset_right = 87.0625
+offset_bottom = 309.0
+tooltip_text = "The number of vertices closest to the target to paint
+
+Press ENTER to set value"
+text = "1"
+clear_button_enabled = true
+select_all_on_focus = true
+
+[node name="Node3D" type="Node3D" parent="."]
+script = ExtResource("2_aplt7")
+
+[connection signal="toggled" from="EnablePaintingCheckBox" to="." method="_on_enable_painting_toggled"]
+[connection signal="toggled" from="ShowVertexColorsCheckBox" to="." method="_on_check_box_toggled"]
+[connection signal="toggled" from="DebugMeshCheckBox" to="." method="_on_check_box_toggled2"]
+[connection signal="text_submitted" from="RedLineEdit" to="." method="_on_line_edit_text_submitted" binds= ["Red"]]
+[connection signal="text_submitted" from="GreenLineEdit" to="." method="_on_line_edit_text_submitted" binds= ["Green"]]
+[connection signal="text_submitted" from="BlueLineEdit" to="." method="_on_line_edit_text_submitted" binds= ["Blue"]]
+[connection signal="text_submitted" from="BrushSizeLineEdit" to="." method="_on_brush_size_text_submitted"]
