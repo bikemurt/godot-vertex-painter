@@ -6,26 +6,40 @@ extends Node3D
 
 @onready var _space: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
 
-var _mesh_data_array := {}
-
 signal update_colors
 
-func _ready():
-	get_parent().connect("mouse_3d", calc_hit)
-	get_parent().connect("delete_debug_mesh", delete_debug_mesh)
-	get_parent().connect("lock", lock)
+var _mesh_data_array := {}
+var m : MeshInstance3D = null
 
-func lock(node, state):
+func _ready():
+	get_parent().connect("project_mouse", _color_mesh)
+	get_parent().connect("delete_debug_mesh", _delete_debug_mesh)
+	get_parent().connect("lock", _lock)
+	get_parent().connect("bucket_fill", _bucket_fill)
+
+func _get_mdt(mesh_i: MeshInstance3D):
+	var mesh_id := mesh_i.get_instance_id()
+	if not _mesh_data_array.has(mesh_id):
+		var mdt := MeshDataTool.new()
+		mdt.create_from_surface(mesh_i.mesh, 0)
+		_mesh_data_array[mesh_id] = mdt
+	
+	return _mesh_data_array[mesh_id]
+
+func _bucket_fill(mesh_i: MeshInstance3D):
+	var mdt = _get_mdt(mesh_i)
+	update_colors.emit(mdt, range(mdt.get_vertex_count()), mesh_i)
+
+func _lock(node, state):
 	for child in node.get_children():
 		if child is Node3D:
 			if state == false:
 				state = null
 			child.set_meta("_edit_lock_", state)
 			
-		lock(child, state)
+		_lock(child, state)
 
-var m : MeshInstance3D = null
-func calc_hit(from, to, active_node: Node3D, n=1, debug=false):
+func _color_mesh(from, to, active_node: Node3D, n=1, debug=false):
 	var ray := PhysicsRayQueryParameters3D.create(
 		from, to, 0x1)
 	
@@ -35,14 +49,8 @@ func calc_hit(from, to, active_node: Node3D, n=1, debug=false):
 	var mesh_i := _find_mesh(hit.collider)
 	mesh_i.set_owner(get_tree().edited_scene_root)
 	
-	var mesh_id := mesh_i.get_instance_id()
-	if not _mesh_data_array.has(mesh_id):
-		var mdt := MeshDataTool.new()
-		mdt.create_from_surface(mesh_i.mesh, 0)
-		_mesh_data_array[mesh_id] = mdt
-	
 	var m_origin = mesh_i.global_transform.origin
-	var mdt = _mesh_data_array[mesh_id]
+	var mdt = _get_mdt(mesh_i)
 	var idxs = _get_n_closest_vertices(mdt, m_origin, hit.position, n)
 	update_colors.emit(mdt, idxs, mesh_i)
 	
@@ -93,7 +101,7 @@ func _get_n_closest_vertices(mdt: MeshDataTool, mesh_pos: Vector3, hit_pos: Vect
 		v_indices.append(vertex[0])
 	return v_indices
 	
-func delete_debug_mesh():
+func _delete_debug_mesh():
 	if m != null:
 		m.get_parent().remove_child(m)
 		m = null

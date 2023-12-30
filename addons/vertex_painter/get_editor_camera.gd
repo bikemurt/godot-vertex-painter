@@ -1,9 +1,10 @@
 @tool
 extends Control
 
-signal mouse_3d
+signal project_mouse
 signal delete_debug_mesh
 signal lock
+signal bucket_fill
 
 const NODE_3D_VIEWPORT_CLASS_NAME = "Node3DEditorViewport"
 const MAT_CACHE = "res://addons/vertex_painter/mat_cache"
@@ -14,11 +15,11 @@ var _editor_viewports : Array = []
 var _editor_cameras : Array = []
 
 var _debug_mesh := false
-var _color_vals := {
-	"Red": 1.0,
-	"Green": 1.0,
-	"Blue": 1.0
-}
+
+var _red := 1.0
+var _green := 1.0
+var _blue := 1.0
+
 var _enable_painting := false
 var _brush_size : int = 5
 var _move_coloring := false
@@ -70,7 +71,7 @@ func color(event):
 		var from = camera.project_ray_origin(mouse_coords)
 		var to = from + camera.project_ray_normal(mouse_coords) * 1_000
 		
-		mouse_3d.emit(from, to, node, _brush_size, _debug_mesh)
+		project_mouse.emit(from, to, node, _brush_size, _debug_mesh)
 		
 func _input(event):
 	if event is InputEventMouseButton:
@@ -119,14 +120,7 @@ func _input(event):
 		
 		_last_position = event.position
 
-func _update_colors(mdt, idxs, mesh_i: MeshInstance3D):
-	var red = _color_vals["Red"]
-	var green = _color_vals["Green"]
-	var blue = _color_vals["Blue"]
-	var color = Color(red, green, blue)
-	for idx in idxs:
-		mdt.set_vertex_color(idx, color)
-
+func _update_mesh(mesh_i: MeshInstance3D, mdt: MeshDataTool):
 	mesh_i.mesh.clear_surfaces()
 	mdt.commit_to_surface(mesh_i.mesh)
 	
@@ -135,6 +129,13 @@ func _update_colors(mdt, idxs, mesh_i: MeshInstance3D):
 	var mi_id = mesh_i.get_instance_id()
 	get_tree().call_group("vertex_painter", "_update_mesh_data", mi_id, mdt)
 
+
+func _update_colors(mdt, idxs, mesh_i: MeshInstance3D):
+	var color = Color(_red, _green, _blue)
+	for idx in idxs:
+		mdt.set_vertex_color(idx, color)
+
+	_update_mesh(mesh_i, mdt)
 
 ###   UI   ###
 
@@ -171,10 +172,16 @@ func _on_check_box_toggled2(button_pressed):
 
 # R, G, B INPUTS
 func _on_line_edit_text_submitted(new_text, color):
-	_color_vals[color] = clampf(float(new_text), 0, 1)
+	var val = clampf(float(new_text), 0, 1)
+	if color == "Red":
+		_red = val
+	if color == "Green":
+		_green = val
+	if color == "Blue":
+		_blue = val
 	
 	var line_edit = get_node(color + "LineEdit")
-	line_edit.text = str(_color_vals[color])
+	line_edit.text = str(val)
 
 # ENABLE PAINTING
 func _on_enable_painting_toggled(button_pressed):
@@ -191,3 +198,8 @@ func _on_brush_size_text_submitted(new_text):
 	
 	var line_edit = get_node("BrushSizeLineEdit")
 	line_edit.text = str(_brush_size)
+
+# BUCKET FILL
+func _on_button_pressed():
+	if _last_3d_node is MeshInstance3D:
+		bucket_fill.emit(_last_3d_node)
