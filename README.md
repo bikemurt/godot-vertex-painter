@@ -2,6 +2,8 @@
  
 **A simple tool to paint vertex colors on MeshInstance3Ds.**
 
+https://youtu.be/kPeYi7-9U6U
+
 ---
 
 **Godot Versions Tested**
