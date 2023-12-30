@@ -4,7 +4,7 @@
 
 ---
 
-**Versions Tested**
+**Godot Versions Tested**
 
 -- v4.1.1
 
@@ -16,9 +16,12 @@ https://github.com/bikemurt/godot-vertex-painter/assets/23486102/25de8684-ecca-4
 ---
 Performance is good enough to intact with other plugins, (for example my fork of [godot-multimesh-scatter](https://github.com/bikemurt/godot-multimesh-scatter))
 
+https://github.com/bikemurt/godot-vertex-painter/assets/23486102/3c218bdb-3fc2-4e35-9641-5d20e35f10e5
+
+---
 ## 🚀 Install & Use
 
-1. Download this [repository](https://github.com/arcaneenergy/godot-multimesh-scatter).
+1. Download this [repository](https://github.com/bikemurt/godot-vertex-painter/)
     - Import the addons folder into your project (if it already isn't present).
 2. Activate the Vertex Painter addon under Project > Project Settings > Plugins. If an error dialog appears, restart the engine and try activating it again.
 3. Add a MeshInstance3D to the scene which you wish to paint vertex colors
