@@ -143,10 +143,12 @@ func _update_colors(mdt, idxs, mesh_i: MeshInstance3D):
 
 	_update_mesh(mesh_i, mdt)
 
-func _set_vertex_color_mat(node: MeshInstance3D):
+func _set_vertex_color_mat(node: MeshInstance3D, nullmat = false):
 	var mat : Material = node.get_surface_override_material(0)
 	if mat != null:
 		_mats[node.get_path()] = mat
+	else:
+		_mats[node.get_path()] = "nullmat"
 	
 	var material = load(SHADER_PATH + "/vertex_color.tres")		
 	var shader = load(SHADER_PATH + "/vertex_color.gdshader")
@@ -156,7 +158,9 @@ func _set_vertex_color_mat(node: MeshInstance3D):
 
 func _set_cached_material(node: MeshInstance3D):
 	var mat = _mats[node.get_path()]
-	if mat:
+	if mat == "nullmat":
+		node.set_surface_override_material(0, null)
+	else:
 		node.set_surface_override_material(0, mat)
 		_mats.erase(node.get_path())
 
@@ -204,7 +208,10 @@ func _on_button_pressed():
 func _on_toggle_vertex_color_pressed():
 	if _last_3d_node is MeshInstance3D:	
 		var mat : Material = _last_3d_node.get_surface_override_material(0)
-		if mat.resource_path == SHADER_PATH + "/vertex_color.tres":
-			_set_cached_material(_last_3d_node)
+		if mat != null:
+			if mat.resource_path == SHADER_PATH + "/vertex_color.tres":
+				_set_cached_material(_last_3d_node)
+			else:
+				_set_vertex_color_mat(_last_3d_node)
 		else:
-			_set_vertex_color_mat(_last_3d_node)
+			_set_vertex_color_mat(_last_3d_node, true)
