@@ -1,3 +1,5 @@
+<img src="addons/vertex_painter/icon.png" width="64" align="left" />
+
 ## godot-vertex-painter
  
 **A simple tool to paint vertex colors on MeshInstance3Ds.**
