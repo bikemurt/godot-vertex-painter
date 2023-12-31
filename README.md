@@ -33,6 +33,10 @@ https://github.com/bikemurt/godot-vertex-painter/assets/23486102/3c218bdb-3fc2-4
 5. Set R, G and B values and click "Enable Painting" to start painting
 6. (Optional) Click your MeshInstance3D in the scene tree and click "Show Colors" to get a visualization of the vertex colors.
 
+## ⚠️ Limitations
+
+- Only imported meshes will work (or ArrayMesh, which have a clear_surfaces() method)
+
 ## 🏠 Links
 
 - [Homepage](https://www.michaeljared.ca/)
