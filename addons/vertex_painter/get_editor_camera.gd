@@ -148,8 +148,9 @@ func _on_check_box_toggled(button_pressed):
 		
 		if button_pressed:
 			if id not in _mats:
-				var current_mat : Material = _last_3d_node.get_surface_override_material(0)
-				_mats[id] = current_mat.resource_path
+				var mat : Material = _last_3d_node.get_surface_override_material(0)
+				if mat != null:
+					_mats[id] = mat.resource_path
 
 			var material = load(SHADER_PATH + "/vertex_color.tres")		
 			var shader = load(SHADER_PATH + "/vertex_color.gdshader")
@@ -157,10 +158,13 @@ func _on_check_box_toggled(button_pressed):
 			
 			_last_3d_node.set_surface_override_material(int(0), material)
 		else:
+			if _last_3d_node.get_surface_override_material(0) == null:
+				return
 			if id in _mats:
 				var mat = load(_mats[id])
 				_last_3d_node.set_surface_override_material(int(0), mat)
 			else:
+				_last_3d_node.set_surface_override_material(0, null)
 				printerr("failed to revert material for " + str(_last_3d_node))
 			
 # DEBUG MESH
