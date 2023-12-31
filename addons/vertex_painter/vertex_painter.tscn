@@ -11,22 +11,11 @@ script = ExtResource("1_6dus2")
 [node name="EnablePaintingCheckBox" type="CheckBox" parent="."]
 layout_mode = 0
 offset_left = 2.0
-offset_top = 204.0
+offset_top = 2.0
 offset_right = 180.0
-offset_bottom = 240.0
+offset_bottom = 38.0
 tooltip_text = "When enabled, paint mode is active and the viewport will be switched to the 3D editor"
 text = "Enable Painting"
-
-[node name="ShowVertexColorsCheckBox" type="CheckBox" parent="."]
-layout_mode = 0
-offset_left = 1.0
-offset_top = 5.0
-offset_right = 179.0
-offset_bottom = 41.0
-tooltip_text = "When checked, the current material will be cached and vertex color visualization material will be loaded on the selected mesh.
-
-NOTE: make sure you uncheck this when you are done painting otherwise you may lose your original material"
-text = "Show Colors"
 
 [node name="DebugMeshCheckBox" type="CheckBox" parent="."]
 layout_mode = 0
@@ -102,18 +91,18 @@ select_all_on_focus = true
 
 [node name="BrushSize" type="Label" parent="."]
 layout_mode = 0
-offset_left = 3.0
-offset_top = 246.0
-offset_right = 88.0
-offset_bottom = 272.0
+offset_left = 1.0
+offset_top = 205.0
+offset_right = 86.0
+offset_bottom = 231.0
 text = "Brush Size:"
 
 [node name="BrushSizeLineEdit" type="LineEdit" parent="."]
 layout_mode = 0
-offset_left = 4.0
-offset_top = 278.0
-offset_right = 87.0625
-offset_bottom = 309.0
+offset_left = 2.0
+offset_top = 237.0
+offset_right = 85.0625
+offset_bottom = 268.0
 tooltip_text = "The number of vertices closest to the target to paint
 
 Press ENTER to set value"
@@ -124,10 +113,28 @@ select_all_on_focus = true
 [node name="Node3D" type="Node3D" parent="."]
 script = ExtResource("2_aplt7")
 
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 279.0
+offset_right = 131.0
+offset_bottom = 314.0
+text = "Bucket Fill"
+
+[node name="Button2" type="Button" parent="."]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 328.0
+offset_right = 131.0
+offset_bottom = 363.0
+text = "Toggle
+Vertex Color"
+
 [connection signal="toggled" from="EnablePaintingCheckBox" to="." method="_on_enable_painting_toggled"]
-[connection signal="toggled" from="ShowVertexColorsCheckBox" to="." method="_on_check_box_toggled"]
 [connection signal="toggled" from="DebugMeshCheckBox" to="." method="_on_check_box_toggled2"]
 [connection signal="text_submitted" from="RedLineEdit" to="." method="_on_line_edit_text_submitted" binds= ["Red"]]
 [connection signal="text_submitted" from="GreenLineEdit" to="." method="_on_line_edit_text_submitted" binds= ["Green"]]
 [connection signal="text_submitted" from="BlueLineEdit" to="." method="_on_line_edit_text_submitted" binds= ["Blue"]]
 [connection signal="text_submitted" from="BrushSizeLineEdit" to="." method="_on_brush_size_text_submitted"]
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="Button2" to="." method="_on_toggle_vertex_color_pressed"]

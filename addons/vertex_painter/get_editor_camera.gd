@@ -39,7 +39,13 @@ func _ready():
 	for v in _editor_viewports:
 		_find_cameras(v)
 	
+	_coloring = false
+	_move_coloring = false
+	_mats = {}
+	
 	node_3d.connect("update_colors", _update_colors)
+
+###
 
 func _find_viewports(n : Node):
 	if n.get_class() == NODE_3D_VIEWPORT_CLASS_NAME:
@@ -57,7 +63,7 @@ func _find_cameras(n : Node):
 	for c in n.get_children():
 		_find_cameras(c)
 
-func color(event):
+func _color(event):
 	var selection = _editor_interface.get_selection()
 	if len(selection.get_selected_nodes()) == 0: return
 	var node = selection.get_selected_nodes()[0]
@@ -96,7 +102,7 @@ func _input(event):
 		
 		if event.button_index == 1:
 			if event.pressed:
-				color(event)
+				_color(event)
 				_coloring = true
 			else:
 				_coloring = false
@@ -115,7 +121,7 @@ func _input(event):
 				# should help paint strokes be more even
 				await get_tree().create_timer(0.01).timeout
 				
-				color(store_event)
+				_color(store_event)
 				
 				_move_coloring = false
 		
@@ -130,7 +136,6 @@ func _update_mesh(mesh_i: MeshInstance3D, mdt: MeshDataTool):
 	var mi_id = mesh_i.get_instance_id()
 	get_tree().call_group("vertex_painter", "_update_mesh_data", mi_id, mdt)
 
-
 func _update_colors(mdt, idxs, mesh_i: MeshInstance3D):
 	var color = Color(_red, _green, _blue)
 	for idx in idxs:
@@ -138,36 +143,23 @@ func _update_colors(mdt, idxs, mesh_i: MeshInstance3D):
 
 	_update_mesh(mesh_i, mdt)
 
-###   UI   ###
+func _set_vertex_color_mat(node: MeshInstance3D):
+	var mat : Material = node.get_surface_override_material(0)
+	if mat != null:
+		_mats[node.get_path()] = mat
+	
+	var material = load(SHADER_PATH + "/vertex_color.tres")		
+	var shader = load(SHADER_PATH + "/vertex_color.gdshader")
+	material.set_shader(shader)
+	
+	node.set_surface_override_material(0, material)
 
-# SHOW COLORS
-func _on_check_box_toggled(button_pressed):
-	if _last_3d_node is MeshInstance3D:
-		var mesh = _last_3d_node.mesh
-		var id = mesh.get_instance_id()
-		
-		if button_pressed:
-			if id not in _mats:
-				var mat : Material = _last_3d_node.get_surface_override_material(0)
-				if mat != null:
-					_mats[id] = mat.resource_path
+func _set_cached_material(node: MeshInstance3D):
+	var mat = _mats[node.get_path()]
+	if mat:
+		node.set_surface_override_material(0, mat)
+		_mats.erase(node.get_path())
 
-			var material = load(SHADER_PATH + "/vertex_color.tres")		
-			var shader = load(SHADER_PATH + "/vertex_color.gdshader")
-			material.set_shader(shader)
-			
-			_last_3d_node.set_surface_override_material(int(0), material)
-		else:
-			if _last_3d_node.get_surface_override_material(0) == null:
-				return
-			if id in _mats:
-				var mat = load(_mats[id])
-				_last_3d_node.set_surface_override_material(int(0), mat)
-				_mats.erase(id)
-			else:
-				_last_3d_node.set_surface_override_material(0, null)
-				printerr("failed to revert material for " + str(_last_3d_node))
-			
 # DEBUG MESH
 func _on_check_box_toggled2(button_pressed):
 	_debug_mesh = button_pressed
@@ -207,3 +199,12 @@ func _on_brush_size_text_submitted(new_text):
 func _on_button_pressed():
 	if _last_3d_node is MeshInstance3D:
 		bucket_fill.emit(_last_3d_node)
+
+# VERTEX COLOR VISUALIZATION
+func _on_toggle_vertex_color_pressed():
+	if _last_3d_node is MeshInstance3D:	
+		var mat : Material = _last_3d_node.get_surface_override_material(0)
+		if mat.resource_path == SHADER_PATH + "/vertex_color.tres":
+			_set_cached_material(_last_3d_node)
+		else:
+			_set_vertex_color_mat(_last_3d_node)
