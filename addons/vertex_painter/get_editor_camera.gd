@@ -158,7 +158,7 @@ func _set_vertex_color_mat(node: MeshInstance3D, nullmat = false):
 
 func _set_cached_material(node: MeshInstance3D):
 	var mat = _mats[node.get_path()]
-	if mat == "nullmat":
+	if mat is String and mat == "nullmat":
 		node.set_surface_override_material(0, null)
 	else:
 		node.set_surface_override_material(0, mat)
