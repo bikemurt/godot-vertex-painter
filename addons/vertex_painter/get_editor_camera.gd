@@ -7,7 +7,6 @@ signal lock
 signal bucket_fill
 
 const NODE_3D_VIEWPORT_CLASS_NAME = "Node3DEditorViewport"
-const MAT_CACHE = "res://addons/vertex_painter/mat_cache"
 const SHADER_PATH = "res://addons/vertex_painter/shaders"
 
 var _editor_interface : EditorInterface
@@ -27,6 +26,8 @@ var _coloring = false
 var _last_position := Vector2(0,0)
 
 var _last_3d_node : Node3D
+
+var _mats = {}
 
 func init(editor_interface : EditorInterface):
 	_editor_interface = editor_interface
@@ -145,25 +146,23 @@ func _on_check_box_toggled(button_pressed):
 		var mesh = _last_3d_node.mesh
 		var id = mesh.get_instance_id()
 		
-		var cache_path = MAT_CACHE + "/m_" + str(id) + ".tres"
-		var da = DirAccess.open(MAT_CACHE)
 		if button_pressed:
-			if not da.file_exists(cache_path):
+			if id not in _mats:
 				var current_mat : Material = _last_3d_node.get_surface_override_material(0)
-				ResourceSaver.save(current_mat, cache_path)
-			
+				_mats[id] = current_mat.resource_path
+
 			var material = load(SHADER_PATH + "/vertex_color.tres")		
 			var shader = load(SHADER_PATH + "/vertex_color.gdshader")
 			material.set_shader(shader)
 			
 			_last_3d_node.set_surface_override_material(int(0), material)
 		else:
-			if da.file_exists(cache_path):
-				var prev_mat = load(cache_path)
-				_last_3d_node.set_surface_override_material(int(0), prev_mat)
+			if id in _mats:
+				var mat = load(_mats[id])
+				_last_3d_node.set_surface_override_material(int(0), mat)
 			else:
-				printerr("cached material for " + str(_last_3d_node) + " does not exist")
-
+				printerr("failed to revert material for " + str(_last_3d_node))
+			
 # DEBUG MESH
 func _on_check_box_toggled2(button_pressed):
 	_debug_mesh = button_pressed
