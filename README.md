@@ -25,7 +25,7 @@ https://github.com/bikemurt/godot-vertex-painter/assets/23486102/3c218bdb-3fc2-4
 ---
 ## 🚀 Install & Use
 
-1. Download this [repository](https://github.com/bikemurt/godot-vertex-painter/)
+1. Download this [repository](https://github.com/bikemurt/godot-vertex-painter/), or download from the [Godot Asset Library](https://godotengine.org/asset-library/asset/2470).
     - Import the addons folder into your project (if it already isn't present).
 2. Activate the Vertex Painter addon under Project > Project Settings > Plugins. If an error dialog appears, restart the engine and try activating it again.
 3. Add a MeshInstance3D to the scene which you wish to paint vertex colors
