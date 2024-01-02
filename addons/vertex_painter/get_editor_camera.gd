@@ -5,6 +5,7 @@ signal project_mouse
 signal delete_debug_mesh
 signal lock
 signal bucket_fill
+signal update_mesh_data
 
 const NODE_3D_VIEWPORT_CLASS_NAME = "Node3DEditorViewport"
 const SHADER_PATH = "res://addons/vertex_painter/shaders"
@@ -13,19 +14,21 @@ var _editor_interface : EditorInterface
 var _editor_viewports : Array = []
 var _editor_cameras : Array = []
 
-var _debug_mesh := false
-
-var _red := 1.0
-var _green := 1.0
-var _blue := 1.0
+## UI DEFAULTS
 
 var _enable_painting := false
+var _red := 1.0
+var _green := 0.0
+var _blue := 0.0
 var _brush_size : int = 5
+
+##
+
 var _move_coloring := false
 var _coloring = false
 var _last_position := Vector2(0,0)
 
-var _last_3d_node : Node3D
+var _last_mesh_i : MeshInstance3D
 
 var _mats = {}
 
@@ -34,6 +37,9 @@ func init(editor_interface : EditorInterface):
 	_last_position = Vector2(0,0)
 
 @onready var node_3d = $Node3D
+@onready var active_mesh_instance = $ActiveMeshInstance
+@onready var mesh_instance_path = $MeshInstancePath
+
 func _ready():
 	_find_viewports(_editor_interface.get_base_control())
 	for v in _editor_viewports:
@@ -42,6 +48,12 @@ func _ready():
 	_coloring = false
 	_move_coloring = false
 	_mats = {}
+	
+	$EnablePaintingCheckBox.button_pressed = _enable_painting
+	$RedLineEdit.text = str(_red)
+	$GreenLineEdit.text = str(_green)
+	$BlueLineEdit.text = str(_blue)
+	$BrushSizeLineEdit.text = str(_brush_size)
 	
 	node_3d.connect("update_colors", _update_colors)
 
@@ -64,29 +76,26 @@ func _find_cameras(n : Node):
 		_find_cameras(c)
 
 func _color(event):
-	var selection = _editor_interface.get_selection()
-	if len(selection.get_selected_nodes()) == 0: return
-	var node = selection.get_selected_nodes()[0]
-	if node is Node3D:
-		var camera = _editor_cameras[0]
-		
-		var offset = _editor_interface.get_editor_main_screen().global_position
-		# the 30 is a magical offset number
-		offset.y += 30
-		#print(offset)
-		var mouse_coords = event.position - offset
-		var from = camera.project_ray_origin(mouse_coords)
-		var to = from + camera.project_ray_normal(mouse_coords) * 1_000
-		
-		project_mouse.emit(from, to, node, _brush_size, _debug_mesh)
+	var camera = _editor_cameras[0]
+	
+	var offset = _editor_interface.get_editor_main_screen().global_position
+	# the 30 is a magical offset number
+	offset.y += 30
+	#print(offset)
+	var mouse_coords = event.position - offset
+	var from = camera.project_ray_origin(mouse_coords)
+	var to = from + camera.project_ray_normal(mouse_coords) * 1_000
+	
+	project_mouse.emit(from, to, _brush_size)
 		
 func _input(event):
 	if event is InputEventMouseButton:
 		var selection = _editor_interface.get_selection()
 		if len(selection.get_selected_nodes()) > 0:
 			var node = selection.get_selected_nodes()[0]
-			if node is Node3D:
-				_last_3d_node = node
+			if node is MeshInstance3D:
+				_last_mesh_i = node
+				active_mesh_instance.text = _last_mesh_i.name
 	
 	if not _enable_painting: return
 	
@@ -131,10 +140,13 @@ func _update_mesh(mesh_i: MeshInstance3D, mdt: MeshDataTool):
 	mesh_i.mesh.clear_surfaces()
 	mdt.commit_to_surface(mesh_i.mesh)
 	
-	get_tree().call_group("vertex_painter", "_update")
-	
+	_notify_plugins(mesh_i, mdt)
+
+func _notify_plugins(mesh_i: MeshInstance3D, mdt: MeshDataTool):
 	var mi_id = mesh_i.get_instance_id()
 	get_tree().call_group("vertex_painter", "_update_mesh_data", mi_id, mdt)
+	
+	get_tree().call_group("vertex_painter", "_update")
 
 func _update_colors(mdt, idxs, mesh_i: MeshInstance3D):
 	var color = Color(_red, _green, _blue)
@@ -164,12 +176,6 @@ func _set_cached_material(node: MeshInstance3D):
 		node.set_surface_override_material(0, mat)
 		_mats.erase(node.get_path())
 
-# DEBUG MESH
-func _on_check_box_toggled2(button_pressed):
-	_debug_mesh = button_pressed
-	if not button_pressed:
-		delete_debug_mesh.emit()
-
 # R, G, B INPUTS
 func _on_line_edit_text_submitted(new_text, color):
 	var val = clampf(float(new_text), 0, 1)
@@ -183,11 +189,20 @@ func _on_line_edit_text_submitted(new_text, color):
 	var line_edit = get_node(color + "LineEdit")
 	line_edit.text = str(val)
 
+func _bump_first_node3d(node):
+	if node is Node3D:
+		node.translate(Vector3(0, 0, 0))
+	else:
+		for child in node.get_children():
+			_bump_first_node3d(child)
+
 # ENABLE PAINTING
 func _on_enable_painting_toggled(button_pressed):
 	_enable_painting = button_pressed
 	
 	lock.emit(_editor_interface.get_edited_scene_root(), button_pressed)
+	
+	_bump_first_node3d(_editor_interface.get_edited_scene_root())
 	
 	if _enable_painting:
 		_editor_interface.set_main_screen_editor("3D")
@@ -201,17 +216,38 @@ func _on_brush_size_text_submitted(new_text):
 
 # BUCKET FILL
 func _on_button_pressed():
-	if _last_3d_node is MeshInstance3D:
-		bucket_fill.emit(_last_3d_node)
+	bucket_fill.emit(_last_mesh_i)
 
 # VERTEX COLOR VISUALIZATION
 func _on_toggle_vertex_color_pressed():
-	if _last_3d_node is MeshInstance3D:	
-		var mat : Material = _last_3d_node.get_surface_override_material(0)
-		if mat != null:
-			if mat.resource_path == SHADER_PATH + "/vertex_color.tres":
-				_set_cached_material(_last_3d_node)
-			else:
-				_set_vertex_color_mat(_last_3d_node)
+	var mat : Material = _last_mesh_i.get_surface_override_material(0)
+	if mat != null:
+		if mat.resource_path == SHADER_PATH + "/vertex_color.tres":
+			_set_cached_material(_last_mesh_i)
 		else:
-			_set_vertex_color_mat(_last_3d_node, true)
+			_set_vertex_color_mat(_last_mesh_i)
+	else:
+		_set_vertex_color_mat(_last_mesh_i, true)
+
+# COPY VERTEX COLORS
+func _on_copy_vertex_colorto_active_button_pressed():
+	var mesh = load(mesh_instance_path.text)
+	if mesh is Mesh:
+		var active_mesh_i = _last_mesh_i
+		var active_mdt = MeshDataTool.new()
+		active_mdt.create_from_surface(active_mesh_i.mesh, 0)
+		
+		var mdt = MeshDataTool.new()
+		mdt.create_from_surface(mesh, 0)
+		
+		for v in range(mdt.get_vertex_count()):
+			active_mdt.set_vertex_color(v, mdt.get_vertex_color(v))
+		
+		update_mesh_data.emit(active_mesh_i.get_instance_id(), active_mdt)
+		_update_mesh(active_mesh_i, active_mdt)
+	else:
+		printerr("Failed to load mesh from " + mesh_instance_path.text)
+	pass # Replace with function body.
+
+func _on_save_mesh_to_path_pressed():
+	ResourceSaver.save(_last_mesh_i.mesh, mesh_instance_path.text)

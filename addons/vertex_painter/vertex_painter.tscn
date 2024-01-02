@@ -17,45 +17,36 @@ offset_bottom = 38.0
 tooltip_text = "When enabled, paint mode is active and the viewport will be switched to the 3D editor"
 text = "Enable Painting"
 
-[node name="DebugMeshCheckBox" type="CheckBox" parent="."]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 45.0
-offset_right = 180.0
-offset_bottom = 81.0
-tooltip_text = "Enable to show a Box mesh at the project mouse location on the 3D collision surface"
-text = "Debug Mesh"
-
 [node name="RedLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 1.0
-offset_top = 94.0
-offset_right = 32.0
-offset_bottom = 120.0
+offset_left = 3.0
+offset_top = 37.0
+offset_right = 34.0
+offset_bottom = 63.0
 text = "R:"
 
 [node name="GreenLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 1.0
-offset_top = 132.0
-offset_right = 32.0
-offset_bottom = 158.0
+offset_left = 3.0
+offset_top = 75.0
+offset_right = 34.0
+offset_bottom = 101.0
 text = "G:"
 
 [node name="BlueLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 2.0
-offset_top = 168.0
-offset_right = 33.0
-offset_bottom = 194.0
+offset_left = 4.0
+offset_top = 111.0
+offset_right = 35.0
+offset_bottom = 137.0
 text = "B:"
 
 [node name="RedLineEdit" type="LineEdit" parent="."]
 layout_mode = 0
-offset_left = 28.0
-offset_top = 92.0
-offset_right = 111.063
-offset_bottom = 123.0
+offset_left = 30.0
+offset_top = 35.0
+offset_right = 113.063
+offset_bottom = 66.0
 tooltip_text = "Red value
 
 Press ENTER to set value"
@@ -65,44 +56,44 @@ select_all_on_focus = true
 
 [node name="GreenLineEdit" type="LineEdit" parent="."]
 layout_mode = 0
-offset_left = 28.0
-offset_top = 130.0
-offset_right = 111.063
-offset_bottom = 161.0
+offset_left = 30.0
+offset_top = 73.0
+offset_right = 113.063
+offset_bottom = 104.0
 tooltip_text = "Green value
 
 Press ENTER to set value"
-text = "1"
+text = "0"
 clear_button_enabled = true
 select_all_on_focus = true
 
 [node name="BlueLineEdit" type="LineEdit" parent="."]
 layout_mode = 0
-offset_left = 29.0
-offset_top = 166.0
-offset_right = 112.063
-offset_bottom = 197.0
+offset_left = 31.0
+offset_top = 109.0
+offset_right = 114.063
+offset_bottom = 140.0
 tooltip_text = "Blue value
 
 Press ENTER to set value"
-text = "1"
+text = "0"
 clear_button_enabled = true
 select_all_on_focus = true
 
 [node name="BrushSize" type="Label" parent="."]
 layout_mode = 0
-offset_left = 1.0
-offset_top = 205.0
-offset_right = 86.0
-offset_bottom = 231.0
+offset_left = 3.0
+offset_top = 148.0
+offset_right = 88.0
+offset_bottom = 174.0
 text = "Brush Size:"
 
 [node name="BrushSizeLineEdit" type="LineEdit" parent="."]
 layout_mode = 0
-offset_left = 2.0
-offset_top = 237.0
-offset_right = 85.0625
-offset_bottom = 268.0
+offset_left = 4.0
+offset_top = 180.0
+offset_right = 87.0625
+offset_bottom = 211.0
 tooltip_text = "The number of vertices closest to the target to paint
 
 Press ENTER to set value"
@@ -113,28 +104,84 @@ select_all_on_focus = true
 [node name="Node3D" type="Node3D" parent="."]
 script = ExtResource("2_aplt7")
 
-[node name="Button" type="Button" parent="."]
+[node name="BucketFillButton" type="Button" parent="."]
 layout_mode = 0
 offset_left = 2.0
-offset_top = 279.0
+offset_top = 298.0
 offset_right = 131.0
-offset_bottom = 314.0
+offset_bottom = 333.0
 text = "Bucket Fill"
 
-[node name="Button2" type="Button" parent="."]
+[node name="ToggleVertexColorButton" type="Button" parent="."]
 layout_mode = 0
 offset_left = 2.0
-offset_top = 328.0
+offset_top = 347.0
 offset_right = 131.0
-offset_bottom = 363.0
+offset_bottom = 401.0
 text = "Toggle
 Vertex Color"
 
+[node name="ActiveMeshInstanceLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 223.0
+offset_right = 171.0
+offset_bottom = 249.0
+text = "Active Mesh Instance:"
+
+[node name="ActiveMeshInstance" type="Label" parent="."]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 258.0
+offset_right = 170.0
+offset_bottom = 284.0
+text = "(none selected)"
+
+[node name="MeshResourcePathLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 414.0
+offset_right = 172.0
+offset_bottom = 440.0
+text = "Mesh Resource Path:"
+
+[node name="MeshInstancePath" type="LineEdit" parent="."]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 447.0
+offset_right = 153.0
+offset_bottom = 478.0
+tooltip_text = "The number of vertices closest to the target to paint
+
+Press ENTER to set value"
+clear_button_enabled = true
+select_all_on_focus = true
+
+[node name="CopyVertexColortoActiveButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 490.0
+offset_right = 151.0
+offset_bottom = 544.0
+text = "Copy Vertex
+Color to Active"
+
+[node name="SaveMeshToPath" type="Button" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 554.0
+offset_right = 152.0
+offset_bottom = 608.0
+text = "Save Mesh to
+Path"
+
 [connection signal="toggled" from="EnablePaintingCheckBox" to="." method="_on_enable_painting_toggled"]
-[connection signal="toggled" from="DebugMeshCheckBox" to="." method="_on_check_box_toggled2"]
 [connection signal="text_submitted" from="RedLineEdit" to="." method="_on_line_edit_text_submitted" binds= ["Red"]]
 [connection signal="text_submitted" from="GreenLineEdit" to="." method="_on_line_edit_text_submitted" binds= ["Green"]]
 [connection signal="text_submitted" from="BlueLineEdit" to="." method="_on_line_edit_text_submitted" binds= ["Blue"]]
 [connection signal="text_submitted" from="BrushSizeLineEdit" to="." method="_on_brush_size_text_submitted"]
-[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
-[connection signal="pressed" from="Button2" to="." method="_on_toggle_vertex_color_pressed"]
+[connection signal="pressed" from="BucketFillButton" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="ToggleVertexColorButton" to="." method="_on_toggle_vertex_color_pressed"]
+[connection signal="text_submitted" from="MeshInstancePath" to="." method="_on_brush_size_text_submitted"]
+[connection signal="pressed" from="CopyVertexColortoActiveButton" to="." method="_on_copy_vertex_colorto_active_button_pressed"]
+[connection signal="pressed" from="SaveMeshToPath" to="." method="_on_save_mesh_to_path_pressed"]

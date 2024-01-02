@@ -9,13 +9,17 @@ extends Node3D
 signal update_colors
 
 var _mesh_data_array := {}
-var m : MeshInstance3D = null
 
 func _ready():
 	get_parent().connect("project_mouse", _color_mesh)
-	get_parent().connect("delete_debug_mesh", _delete_debug_mesh)
 	get_parent().connect("lock", _lock)
 	get_parent().connect("bucket_fill", _bucket_fill)
+	get_parent().connect("update_mesh_data", _update_mesh_data)
+
+func _update_mesh_data(mesh_id, mdt):
+	# debug
+	#print("Vertex tool updating mdt " + str(mesh_id))
+	_mesh_data_array[mesh_id] = mdt
 
 func _get_mdt(mesh_i: MeshInstance3D):
 	var mesh_id := mesh_i.get_instance_id()
@@ -39,7 +43,7 @@ func _lock(node, state):
 			
 		_lock(child, state)
 
-func _color_mesh(from, to, active_node: Node3D, n=1, debug=false):
+func _color_mesh(from, to, n=1):
 	var ray := PhysicsRayQueryParameters3D.create(
 		from, to, 0x1)
 	
@@ -53,16 +57,6 @@ func _color_mesh(from, to, active_node: Node3D, n=1, debug=false):
 	var mdt = _get_mdt(mesh_i)
 	var idxs = _get_n_closest_vertices(mdt, m_origin, hit.position, n)
 	update_colors.emit(mdt, idxs, mesh_i)
-	
-	if debug:
-		if m == null:
-			m = MeshInstance3D.new()
-			m.name = "DebugMesh"
-			m.mesh = BoxMesh.new()
-			active_node.get_parent().add_child(m)
-			m.set_owner(get_tree().edited_scene_root)
-			
-		m.position = hit.position
 
 func _find_mesh(node: Node) -> MeshInstance3D:
 	var p := node.get_parent()
@@ -100,11 +94,6 @@ func _get_n_closest_vertices(mdt: MeshDataTool, mesh_pos: Vector3, hit_pos: Vect
 	for vertex in vertices:
 		v_indices.append(vertex[0])
 	return v_indices
-	
-func _delete_debug_mesh():
-	if m != null:
-		m.get_parent().remove_child(m)
-		m = null
 
 func _process(delta):
 	pass

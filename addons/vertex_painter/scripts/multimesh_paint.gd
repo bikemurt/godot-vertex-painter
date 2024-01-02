@@ -223,18 +223,6 @@ func _load_primes():
 	for p in primes:
 		_primes.append(int(p))
 
-func _update_mesh_data(mesh_id, mdt):
-	if not _updating_mdt:
-		_updating_mdt = true
-		
-		await get_tree().create_timer(1.0).timeout
-		
-		# debug
-		#print("updating mdt " + str(mesh_id))
-		_mesh_data_array[mesh_id] = mdt
-		
-		_updating_mdt = false
-
 func _notification(what: int) -> void:
 	if !is_inside_tree(): return
 
@@ -260,6 +248,18 @@ func _update() -> void:
 		scatter()
 		
 		_is_updating = false
+
+func _update_mesh_data(mesh_id, mdt):
+	if not _updating_mdt:
+		_updating_mdt = true
+		
+		await get_tree().create_timer(1.0).timeout
+		
+		# debug
+		#print("updating mdt " + str(mesh_id))
+		_mesh_data_array[mesh_id] = mdt
+		
+		_updating_mdt = false
 
 func scatter() -> void:
 
@@ -306,6 +306,7 @@ func scatter() -> void:
 	# next extract all vertices matching color requirements
 	var vert_positions = []
 	var vert_normals = []
+	var target_color = Color(r_channel, g_channel, b_channel)
 	for v in range(mdt.get_vertex_count()):
 		
 		# density algorithm uses prime numbers
@@ -316,14 +317,14 @@ func scatter() -> void:
 		
 		if skip: continue
 		
+		# Vertex color constraints
 		var c : Color = mdt.get_vertex_color(v)
-		
 		var valid_color = (c.r * r_channel) + (c.g * g_channel) + (c.b * b_channel)
 		if valid_color >= 0.1:
 			var v_pos := mdt.get_vertex(v) + mesh_i.global_position
 			var v_nrm := mdt.get_vertex_normal(v)
 			
-			# Angle constraints check
+			# Angle constraints
 			if use_angle:
 				var off: float = rad_to_deg((abs(v_nrm.x) + abs(v_nrm.z)) / 2.0)
 				if not off < angle_degrees:
@@ -339,13 +340,6 @@ func scatter() -> void:
 	for i in range(l):
 		var v_pos = vert_positions[i]
 		var v_nrm = vert_normals[i]
-		
-		var rand_offset = Vector3(0,0,0)
-		rand_offset.x += _rng.randf_range(random_offset_min.x, random_offset_max.x)
-		rand_offset.y += _rng.randf_range(random_offset_min.y, random_offset_max.y)
-		rand_offset.z += _rng.randf_range(random_offset_min.z, random_offset_max.z)
-		
-		v_pos += rand_offset
 		
 		if not custom_normal.is_zero_approx():
 			v_nrm = custom_normal.normalized()
@@ -366,11 +360,23 @@ func scatter() -> void:
 		scale_y = scale_uniformity * scale_x + (1.0 - scale_uniformity) * scale_y
 		scale_z = scale_uniformity * scale_x + (1.0 - scale_uniformity) * scale_z
 		
+		var rand_scale = Vector3(scale_x, scale_y, scale_z)
+		
+		var rand_offset = Vector3(0,0,0)
+		rand_offset.x += _rng.randf_range(random_offset_min.x, random_offset_max.x)
+		rand_offset.y += _rng.randf_range(random_offset_min.y, random_offset_max.y)
+		rand_offset.z += _rng.randf_range(random_offset_min.z, random_offset_max.z)
+		
+		# the random offset should be scaled by the scale amount
+		v_pos += rand_offset# / rand_scale
+		
 		t = t\
+			.scaled(base_scale)\
+			.scaled(rand_scale)\
 			.rotated(Vector3.RIGHT, deg_to_rad(_rng.randf_range(-random_rotation.x, random_rotation.x) + offset_rotation.x))\
 			.rotated(Vector3.UP, deg_to_rad(_rng.randf_range(-random_rotation.y, random_rotation.y) + offset_rotation.y))\
-			.rotated(Vector3.FORWARD, deg_to_rad(_rng.randf_range(-random_rotation.z, random_rotation.z) + offset_rotation.z))\
-			.scaled(Vector3(scale_x, scale_y, scale_z))
+			.rotated(Vector3.FORWARD, deg_to_rad(_rng.randf_range(-random_rotation.z, random_rotation.z) + offset_rotation.z))
+		
 		t.origin = v_pos - global_position + offset_position
 
 		multimesh.set_instance_transform(i, t)
