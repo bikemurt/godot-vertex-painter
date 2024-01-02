@@ -22,6 +22,7 @@ V1.2 features:
 - GUI label to show which MeshInstance3D is active
 - "Toggle Vertex Color" visualization now a button instead of checkbox (more intuitive to use)
 - Copy vertex data feature: this allows you to save a mesh resource using Godot, and then later load the vertex colors from that mesh onto an identical mesh. This allows backing up vertex painting work
+- Save vertex data: allows you to save the mesh from the active MeshInstance3D to the specified resource path
 
 ---
 Paint directly in the 3D editor
