@@ -13,6 +13,16 @@
 -- v4.1.1
 
 ---
+2024/01/02 updated UI:
+![image](https://github.com/bikemurt/godot-vertex-painter/assets/23486102/6001e497-5619-43bf-9efb-2e0b52c734cd)
+
+V1.2 features:
+- Bucket fill
+- GUI label to show which MeshInstance3D is active
+- "Toggle Vertex Color" visualization now a button instead of checkbox (more intuitive to use)
+- Copy vertex data feature: this allows you to save a mesh resource using Godot, and then later load the vertex colors from that mesh onto an identical mesh. This allows backing up vertex painting work
+
+---
 Paint directly in the 3D editor
 
 https://github.com/bikemurt/godot-vertex-painter/assets/23486102/25de8684-ecca-4cc3-a9a3-e81fc87b09ed
