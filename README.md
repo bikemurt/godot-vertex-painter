@@ -14,6 +14,7 @@
 
 ---
 2024/01/02 updated UI:
+
 ![image](https://github.com/bikemurt/godot-vertex-painter/assets/23486102/6001e497-5619-43bf-9efb-2e0b52c734cd)
 
 V1.2 features:
