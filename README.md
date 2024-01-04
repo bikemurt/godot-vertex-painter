@@ -10,7 +10,7 @@
 
 **Godot Versions Tested**
 
--- v4.1.1
+- v4.1.1
 
 ---
 2024/01/02 updated UI:
