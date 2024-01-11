@@ -3,6 +3,12 @@ extends MultiMeshInstance3D
 
 @export_group("Spacing")
 
+## Lock in the current multimesh locations.
+@export var lock := false:
+	get: return lock
+	set(value):
+		lock = value
+
 ## The max number of instances to render.
 @export var hard_limit := 500:
 	get: return hard_limit
@@ -262,6 +268,9 @@ func _update_mesh_data(mesh_id, mdt):
 		_updating_mdt = false
 
 func scatter() -> void:
+
+	if lock:
+		return
 
 	if not _ensure_has_mm():
 		printerr("[MultiMeshScatter]: The MultiMeshInstance3D doesn't have an assigned mesh.")
