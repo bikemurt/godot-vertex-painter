@@ -8,31 +8,23 @@
 
 ---
 
-**Godot Versions Tested**
 
+https://github.com/bikemurt/godot-vertex-painter/assets/23486102/fea58b3f-8b71-48c5-840b-d1ae87ef0f7e
+
+
+
+---
+
+**Godot Versions Tested**
+- v4.3.5 dev release
 - v4.1.1
 
 ---
-2024/01/02 updated UI:
-
-![image](https://github.com/bikemurt/godot-vertex-painter/assets/23486102/6001e497-5619-43bf-9efb-2e0b52c734cd)
-
-V1.2 features:
-- Bucket fill
-- GUI label to show which MeshInstance3D is active
-- "Toggle Vertex Color" visualization now a button instead of checkbox (more intuitive to use)
-- Copy vertex data feature: this allows you to save a mesh resource using Godot, and then later load the vertex colors from that mesh onto an identical mesh. This allows backing up vertex painting work
-- Save vertex data: allows you to save the mesh from the active MeshInstance3D to the specified resource path
-
----
-Paint directly in the 3D editor
-
-https://github.com/bikemurt/godot-vertex-painter/assets/23486102/25de8684-ecca-4cc3-a9a3-e81fc87b09ed
-
----
-Performance is good enough to interact with other plugins, (for example my fork of [godot-multimesh-scatter](https://github.com/bikemurt/godot-multimesh-scatter))
-
-https://github.com/bikemurt/godot-vertex-painter/assets/23486102/3c218bdb-3fc2-4e35-9641-5d20e35f10e5
+**V2.0: May 6, 2024**
+- Paint directly on MeshInstance3Ds. StaticBodies are no longer required!
+- This is thanks to an updated algorithm to find the 3D surface: https://twitter.com/_michaeljared/status/1787020920751579407
+- Interface is improved
+- Bucketfill is temporarily removed, let me know if you want this feature
 
 ---
 ## 🚀 Install & Use
@@ -40,10 +32,8 @@ https://github.com/bikemurt/godot-vertex-painter/assets/23486102/3c218bdb-3fc2-4
 1. Download this [repository](https://github.com/bikemurt/godot-vertex-painter/), or download from the [Godot Asset Library](https://godotengine.org/asset-library/asset/2470).
     - Import the addons folder into your project (if it already isn't present).
 2. Activate the Vertex Painter addon under Project > Project Settings > Plugins. If an error dialog appears, restart the engine and try activating it again.
-3. Add a MeshInstance3D to the scene which you wish to paint vertex colors
-4. Add a CollisionObject3D (such as StaticBody3D) to the mesh so that the painter can ray cast onto it
-5. Set R, G and B values and click "Enable Painting" to start painting
-6. (Optional) Click your MeshInstance3D in the scene tree and click "Show Colors" to get a visualization of the vertex colors.
+3. Add a MeshInstance3D to the scene which you wish to paint vertex colors]
+4. Check "Enable Vertex Painting", click the MeshInstance3D, set the Color using the color picker, and start painting on screen
 
 ## ⚠️ Limitations
 
