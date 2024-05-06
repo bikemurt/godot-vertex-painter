@@ -94,6 +94,7 @@ func click_raycast2(offset := Vector2(0,0)) -> Vector3:
 	return point
 
 func start_paint(event: InputEvent) -> void:
+	mouse_camera_3d.show()
 	if show_debug_check_box.button_pressed:
 		debug.show()
 	mesh_i.set_meta("_edit_lock_", true)
@@ -126,6 +127,7 @@ func start_paint_legacy(event: InputEvent) -> void:
 		click_active = true
 
 func stop_paint() -> void:
+	mouse_camera_3d.hide()
 	debug.hide()
 	if pre_mat == null:
 		pre_mat = VERTEX_COLOR
