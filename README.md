@@ -8,6 +8,13 @@
 
 ---
 
+
+https://github.com/bikemurt/godot-vertex-painter/assets/23486102/fea58b3f-8b71-48c5-840b-d1ae87ef0f7e
+
+
+
+---
+
 **Godot Versions Tested**
 - v4.3.5 dev release
 - v4.1.1
