@@ -13,7 +13,7 @@
 - v4.1.1
 
 ---
-V2.0
+**V2.0: May 6, 2024**
 - Paint directly on MeshInstance3Ds. StaticBodies are no longer required!
 - This is thanks to an updated algorithm to find the 3D surface: https://twitter.com/_michaeljared/status/1787020920751579407
 - Interface is improved
