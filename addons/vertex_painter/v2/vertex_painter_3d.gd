@@ -268,8 +268,8 @@ func _input(event: InputEvent) -> void:
 	
 	if screen != "3D": return
 	
-	if event is not InputEventMouseButton and \
-		event is not InputEventMouseMotion: return
+	if not (event is InputEventMouseButton) and \
+		not (event is InputEventMouseMotion): return
 	
 	# check within viewport bounds
 	var evnp: Vector2 = event.position
