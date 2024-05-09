@@ -4,7 +4,7 @@
  
 **A simple tool to paint vertex colors on MeshInstance3Ds.**
 
-[Youtube video](https://youtu.be/kPeYi7-9U6U)
+[[Youtube Video](https://youtu.be/kPeYi7-9U6U)](https://www.youtube.com/watch?v=Qx7UtIk32i8)
 
 ---
 
