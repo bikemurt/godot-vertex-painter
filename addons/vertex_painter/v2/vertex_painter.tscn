@@ -1,8 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://bnfl4nwux8mc4"]
+[gd_scene load_steps=10 format=3 uid="uid://bnfl4nwux8mc4"]
 
-[ext_resource type="Script" path="res://addons/vertex_painter/v2/vertex_painter.gd" id="1_pituq"]
-[ext_resource type="Script" path="res://addons/vertex_painter/v2/vertex_painter_3d.gd" id="2_vflpc"]
-[ext_resource type="Shader" path="res://addons/vertex_painter/v2/gpu_depth.gdshader" id="3_8jrka"]
+[ext_resource type="Script" uid="uid://bg4ok23dxt2dj" path="res://addons/vertex_painter/v2/vertex_painter.gd" id="1_pituq"]
+[ext_resource type="Script" uid="uid://dyqepfgs1pmsh" path="res://addons/vertex_painter/v2/vertex_painter_3d.gd" id="2_vflpc"]
+[ext_resource type="Shader" uid="uid://cc7043s41qu1h" path="res://addons/vertex_painter/v2/gpu_depth.gdshader" id="3_8jrka"]
 
 [sub_resource type="Environment" id="Environment_hpdng"]
 
@@ -12,12 +12,15 @@ size = Vector2(0.1, 0.1)
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_yrme8"]
 render_priority = 0
 shader = ExtResource("3_8jrka")
-shader_parameter/camera_far = 100000.0
+shader_parameter/camera_far = 10000.0
 
 [sub_resource type="SphereMesh" id="SphereMesh_8olv6"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eghqw"]
 albedo_color = Color(0.933333, 1, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q845s"]
+albedo_color = Color(0.26676348, 0.4145387, 1, 1)
 
 [node name="VertexPainter" type="CenterContainer"]
 anchors_preset = 15
@@ -80,7 +83,7 @@ cull_mask = 1
 environment = SubResource("Environment_hpdng")
 projection = 1
 size = 0.1
-far = 100000.0
+far = 10000.0
 
 [node name="ScreenQuad" type="MeshInstance3D" parent="SubViewport/MouseCamera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5)
@@ -88,10 +91,18 @@ mesh = SubResource("QuadMesh_4magw")
 surface_material_override/0 = SubResource("ShaderMaterial_yrme8")
 
 [node name="Debug" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
 visible = false
 layers = 2
 mesh = SubResource("SphereMesh_8olv6")
 surface_material_override/0 = SubResource("StandardMaterial3D_eghqw")
+
+[node name="DebugVertex" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+visible = false
+layers = 2
+mesh = SubResource("SphereMesh_8olv6")
+surface_material_override/0 = SubResource("StandardMaterial3D_q845s")
 
 [connection signal="pressed" from="VBoxContainer/EnableCheckBox" to="." method="_on_enable_check_box_pressed"]
 [connection signal="focus_exited" from="VBoxContainer/BrushLineEdit" to="VertexPainter3D" method="_on_brush_line_edit_focus_exited"]
